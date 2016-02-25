@@ -3,4 +3,19 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_signup">SignupActivity</string>
+    <string name="title_activity_maps">Map</string>
+
+    //Dummy data entries for activity_main listview
+    <string-array name="dummy_data" >
+        <item>Recording One</item>
+        <item>Recording Two</item>
+        <item>Recording Three</item>
+        <item>Recording Four</item>
+        <item>Recording Five</item>
+        <item>Recording Six</item>
+        <item>Recording Seven</item>
+        <item>Recording Eight</item>
+        <item>Recording Nine</item>
+        <item>Recording Ten</item>
+    </string-array>
 </resources>
