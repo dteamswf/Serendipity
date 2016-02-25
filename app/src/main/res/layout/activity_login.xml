@@ -32,18 +32,6 @@
         android:text="Password"
         android:textAlignment="center" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Serendipity"
-        android:id="@+id/loginTitleText"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="53dp"
-        android:textSize="50dp"
-        android:textStyle="bold" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,4 +58,12 @@
         android:layout_below="@+id/signupText"
         android:layout_centerHorizontal="true"
         android:onClick="signup" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/start_icon" />
 </RelativeLayout>
