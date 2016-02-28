@@ -12,7 +12,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-    //When Map button is pressed, launch MapsActivity
+    //When mapsButton is pressed, launch MapsActivity
     public void launchMap(View view){
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         startActivity(intent);
