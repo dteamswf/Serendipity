@@ -1,4 +1,4 @@
-package com.softwarefactory.teamalpha.serendipity;
+package com.softwarefactory.teamdelta.serendipity;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

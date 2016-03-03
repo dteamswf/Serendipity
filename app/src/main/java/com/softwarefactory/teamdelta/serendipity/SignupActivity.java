@@ -1,9 +1,11 @@
-package com.softwarefactory.teamalpha.serendipity;
+package com.softwarefactory.teamdelta.serendipity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+
+import com.softwarefactory.teamalpha.serendipity.R;
 
 public class SignupActivity extends ActionBarActivity {
 

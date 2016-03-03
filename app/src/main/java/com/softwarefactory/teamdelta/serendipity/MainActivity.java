@@ -1,6 +1,5 @@
-package com.softwarefactory.teamalpha.serendipity;
+package com.softwarefactory.teamdelta.serendipity;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -13,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.softwarefactory.teamalpha.serendipity.R;
 
 import java.io.IOException;
 
@@ -61,8 +63,11 @@ public class MainActivity extends ActionBarActivity {
     }
     // Method for releasing the mediaplayer instance when not needed
     private void stopPlaying() {
-        mPlayer.release();
-        mPlayer = null;
+        if (mPlayer != null){
+            mPlayer.release();
+            mPlayer = null;
+        } else{
+        }
     }
     // Method for recording audio
     private void startRecording() {
@@ -85,6 +90,8 @@ public class MainActivity extends ActionBarActivity {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+        Toast.makeText(getApplicationContext(), "Recording finished!",
+                Toast.LENGTH_SHORT).show();
     }
     // Define functonality for dynamic buttons
     class RecordButton extends Button {
