@@ -14,8 +14,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.softwarefactory.teamalpha.serendipity.R;
-
 import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity {

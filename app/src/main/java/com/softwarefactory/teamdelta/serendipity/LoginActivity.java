@@ -8,8 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.softwarefactory.teamalpha.serendipity.R;
-
 public class LoginActivity extends ActionBarActivity {
 
     @Override

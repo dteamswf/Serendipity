@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
-import com.softwarefactory.teamalpha.serendipity.R;
-
 public class SignupActivity extends ActionBarActivity {
 
     @Override
