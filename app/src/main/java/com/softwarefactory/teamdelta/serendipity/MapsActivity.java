@@ -29,8 +29,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -43,6 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        // Disable Maps toolbar (navigation and marker)
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         // Here we add a few markers to various places for demo purposes
         // Add a marker in Bolzano, Italy
         Marker bolzano = mMap.addMarker(new MarkerOptions()
