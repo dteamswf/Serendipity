@@ -5,7 +5,7 @@
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
+         location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.softwarefactory.teamdelta.serendipity.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +28,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.softwarefactory.teamdelta.serendipity.MainActivity"
-            android:label="@string/title_activity_main"/>
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" />
         <activity
-            android:name="com.softwarefactory.teamdelta.serendipity.SignupActivity"
+            android:name=".SignupActivity"
             android:label="@string/title_activity_signup" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -39,15 +39,19 @@
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBUWyR9E8Yy3Rv7aJkSh5HhesB0GKGJ-ZI" />
 
         <activity
-            android:name="com.softwarefactory.teamdelta.serendipity.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".TestconnectivityActivity"
+            android:label="@string/title_activity_testconnectivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
