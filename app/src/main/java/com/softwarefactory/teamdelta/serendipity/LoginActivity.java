@@ -32,14 +32,18 @@ public class LoginActivity extends ActionBarActivity {
                 Toast.makeText(LoginActivity.this, "Settings selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-            case R.id.menu_help:
+            case R.id.action_help:
                 Toast.makeText(LoginActivity.this, "Help is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-            case R.id.menu_about:
+            case R.id.action_about:
                 Toast.makeText(LoginActivity.this, "About is Selected", Toast.LENGTH_SHORT).show();
                 return true;
-
+            // Launch testConnectivity sandboxing class when this menu item is clicked
+            case R.id.action_testConnectivity:
+                Intent intent = new Intent(this, TestconnectivityActivity.class);
+                this.startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
