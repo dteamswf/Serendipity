@@ -5,6 +5,7 @@ import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -26,7 +27,7 @@ public class JSONfunctions {
     public static JSONObject getJSONfromURL(String url) {
         InputStream is = null;
         String result = "";
-        JSONObject jArray = null;
+        JSONObject jObj = null;
 
         // Download JSON data from URL
         try {
@@ -57,11 +58,11 @@ public class JSONfunctions {
 
         try {
 
-            jArray = new JSONObject(result);
+            jObj = new JSONObject(result);
         } catch (JSONException e) {
             Log.e("log_tag", "Error parsing data " + e.toString());
         }
 
-        return jArray;
+        return jObj;
     }
 }
