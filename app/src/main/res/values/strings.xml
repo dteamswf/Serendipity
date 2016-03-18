@@ -8,6 +8,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="action_testConnectivity">TestConnectivity</string>
 
+    <string name="facebook_app_id">1154915717882750</string>
+
     //Dummy data entries for activity_main listview
     <string-array name="dummy_data">
         <item>Recording One</item>

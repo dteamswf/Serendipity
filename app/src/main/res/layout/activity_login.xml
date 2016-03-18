@@ -41,23 +41,32 @@
         android:layout_centerHorizontal="true"
         android:onClick="login" />
 
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/loginButtonFacebook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/loginButton"
+        android:layout_centerHorizontal="true" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Not a user? Sign up for Serendipity below."
         android:id="@+id/signupText"
-        android:layout_below="@+id/loginButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="34dp"
+        android:layout_below="@+id/loginButtonFacebook"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Signup"
         android:id="@+id/button"
+        android:onClick="signup"
         android:layout_below="@+id/signupText"
-        android:layout_centerHorizontal="true"
-        android:onClick="signup" />
+        android:layout_alignLeft="@+id/loginButton"
+        android:layout_alignStart="@+id/loginButton" />
 
     <ImageView
         android:layout_width="wrap_content"

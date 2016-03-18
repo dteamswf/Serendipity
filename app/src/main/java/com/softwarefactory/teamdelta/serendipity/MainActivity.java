@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import com.facebook.FacebookSdk;
+
 public class MainActivity extends ActionBarActivity {
     /*
     The code base in this class regarding the audio recording functionality was retrieved from

@@ -8,10 +8,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 public class LoginActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the SDK before executing any other operations,
+        // especially, if you're using Facebook UI elements.
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        // TODO: Finalize implementation of Facebook login integration
+        // https://developers.facebook.com/docs/facebook-login/android
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
     }
@@ -54,9 +66,31 @@ public class LoginActivity extends ActionBarActivity {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
     }
+
     //Launches SignupActivity when signup button is clicked
     public void signup(View view){
         Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
         startActivity(intent);
+    }
+
+    // App Events let you measure installs on your mobile app ads, create high value audiences for
+    // targeting, and view analytics including user demographics.
+    // Dashboard accessible at https://www.facebook.com/analytics/1154915717882750/
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+    }
+
+    // To accurately track the time people spend in the app
+    // Dashboard accessible at https://www.facebook.com/analytics/1154915717882750/
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
     }
 }
