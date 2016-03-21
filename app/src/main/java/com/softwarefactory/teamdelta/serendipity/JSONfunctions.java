@@ -15,13 +15,17 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * Created by rickhart on 09/03/16.
- * Core of the code obtained from stackoverflow.com user Jeffy Lazars post
- * http://stackoverflow.com/questions/19217835/can-an-android-app-connect-directly-to-an-online-mysql-database%22
- */
-
-//TODO: Create a POC class and activity for this to obtain and view the JSON data. Test using https://httpbin.org/ if backend not ready.
+/*
+* Created by Riku Suomela 2016
+*
+* This class provides functionality for connecting the application to desired URLs over HTTP
+* The idea is that there are several methods in the class for handling with different types of
+* JSON requests over HTTP. This class is hence a collection of methods for HTTP connectivity, that
+* can be used in other parts of the application
+*
+* Core of the code obtained from stackoverflow.com user Jeffy Lazars post
+* http://stackoverflow.com/questions/19217835/can-an-android-app-connect-directly-to-an-online-mysql-database%22
+*/
 public class JSONfunctions {
 
     public static JSONObject getJSONfromURL(String url) {

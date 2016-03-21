@@ -11,13 +11,16 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import java.net.URL;
+
 /*
- * This class is used for doing a server connection proof of concept (POC)
- * The developer can sandbox network functionalities from this class without messing up the actual UI
- * TODO: When the functionality is finished, move it to the right place or refactor this class
- */
+* Created by Riku Suomela 2016
+*
+* This class is used for doing a server connection proof of concept (POC)
+* The developer can sandbox network functionalities from this class without messing up the actual UI
+* TODO: When the functionality is finished, move it to the right place or refactor this class
+*/
 public class TestconnectivityActivity extends AppCompatActivity {
-    // Final for a test server URL
+    // Final for a TEST server URL
     public final static String testURL = "http://headers.jsontest.com/";
     JSONObject jsonobject;
 
@@ -27,14 +30,12 @@ public class TestconnectivityActivity extends AppCompatActivity {
         setContentView(R.layout.activity_testconnectivity);
     }
 
-    //When Test Connection button is pressed, the following functionality is executed
+    // When Test Connection button is pressed, the following functionality is executed
     public void testConnection(View view){
         new HTTPCall().execute();
     }
 
-    /*
-     *This class is used for running the network functionality on a different thread (outside main)
-     */
+    // This class is used for running the network functionality on a different thread (outside main)
     private class HTTPCall extends AsyncTask<String, String, String> {
         //This method executes the functionality inside it in a separate thread
         @Override

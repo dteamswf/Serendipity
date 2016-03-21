@@ -11,10 +11,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/*
+*  Created by Riku Suomela 2016
+*
+* This class integrates the Goole Maps API to the application. Information about saved recordings
+* should be passed here for it to be possible to view those on the map as markers.
+*
+* TODO: This class provides information about the GPS proximity for the applications alert system to work.
+*/
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    //Static GPS coordinates for specific places in Italy
+    //Static GPS coordinates for specific places in Italy, dummy data
     static final LatLng BOLZANO = new LatLng(46.4983, 11.3548);
     static final LatLng SARENTINO = new LatLng(46.6412, 11.3541);
     static final LatLng AUER = new LatLng(46.3481, 11.2990);
@@ -37,7 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         // Disable Maps toolbar (navigation and marker)
         mMap.getUiSettings().setMapToolbarEnabled(false);
-        // Here we add a few markers to various places for demo purposes
+        // Here we add a few markers to various places for demo purposes, hard coded dummy data
         // Add a marker in Bolzano, Italy
         Marker bolzano = mMap.addMarker(new MarkerOptions()
                 .position(BOLZANO)

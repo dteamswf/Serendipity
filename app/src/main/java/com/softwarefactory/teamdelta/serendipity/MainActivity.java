@@ -16,16 +16,22 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import com.facebook.FacebookSdk;
-
 public class MainActivity extends ActionBarActivity {
-    /*
-    The code base in this class regarding the audio recording functionality was retrieved from
-    http://developer.android.com/guide/topics/media/audio-capture.html
-    The original example code has been modified to fit the needs of this project. For example the
-    whole UI is not defined at runtime but rather a couple of buttons are defined at runtime and
-    assigned to the XML layout
-    */
+
+/*
+* Created by Riku Suomela 2016
+*
+* This class is the main activity of the application aka here the users will spend most of their time.
+* This activity contains the functionality for recording and saving audio files. Additionally in this
+* class the saved audio files are listed in a list view. This class also provides access to Google maps
+* for the user.
+*
+* The code base in this class regarding the audio recording functionality was retrieved from
+* http://developer.android.com/guide/topics/media/audio-capture.html
+* The original example code has been modified to fit the needs of this project. For example the
+* whole UI is not defined at runtime but rather a couple of buttons are defined at runtime and
+* assigned to the XML layout
+*/
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
 

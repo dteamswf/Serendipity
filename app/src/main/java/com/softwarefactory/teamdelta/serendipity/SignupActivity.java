@@ -5,6 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
+/*
+* Created by Riku Suomela 2016
+*
+* This class is used for handling all the new user signup activities and functionalities for and
+* with the applications own database. This class does NOT have anything to do with Facebook login.
+*/
 public class SignupActivity extends ActionBarActivity {
 
     @Override
