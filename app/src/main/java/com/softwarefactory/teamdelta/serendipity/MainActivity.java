@@ -10,11 +10,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -34,12 +39,16 @@ public class MainActivity extends ActionBarActivity {
 */
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
+    private static final String APPFOLDER = "/Serendipity";
 
     private RecordButton mRecordButton = null;
     private MediaRecorder mRecorder = null;
 
     private PlayButton   mPlayButton = null;
     private MediaPlayer mPlayer = null;
+
+    private List<String> myList;
+    File file;
 
     private void onRecord(boolean start) {
         if (start) {
@@ -77,6 +86,10 @@ public class MainActivity extends ActionBarActivity {
     }
     // Method for recording audio
     private void startRecording() {
+        /*
+         * Try adding the following code here and eliminate the need for public MainActivity() later
+        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mFileName += "/audiorecordtest.3gp";*/
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -154,15 +167,33 @@ public class MainActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Define buttons and set parameters
+
+        // Define buttons and set parameters
         mRecordButton = new RecordButton(this);
         mRecordButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mPlayButton = new PlayButton(this);
         mPlayButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         // Get container for buttons from the xml and add the buttons to it
         LinearLayout container = (LinearLayout)findViewById(R.id.buttonContainer);
         container.addView(mRecordButton);
         container.addView(mPlayButton);
+
+        // Set up array adapter for listview to list the saved recordings
+        ListView listView = (ListView) findViewById(R.id.listViewRecordings);
+        myList = new ArrayList<String>();
+
+        File directory = Environment.getExternalStorageDirectory();
+        //file = new File( directory + "/Serendipity" );
+        File list[] = directory.listFiles();
+
+        for( int i=0; i< list.length; i++)
+        {
+            myList.add( list[i].getName() );
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, myList);
+        listView.setAdapter(adapter); //Set all the file in the list.
     }
 
     @Override

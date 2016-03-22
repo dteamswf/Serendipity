@@ -3,7 +3,6 @@ package com.softwarefactory.teamdelta.serendipity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.telecom.Call;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 /*
-*  Created by Riku Suomela 2016
+* Created by Riku Suomela 2016
 *
 * This class is an android activity for dealing with signing up new users and logging in existing
 * users. Signing up and logging can be done currently either by using the applications own database
