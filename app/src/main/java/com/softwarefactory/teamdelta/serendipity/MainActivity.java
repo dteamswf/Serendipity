@@ -31,15 +31,17 @@ public class MainActivity extends ActionBarActivity {
 * class the saved audio files are listed in a list view. This class also provides access to Google maps
 * for the user.
 *
-* The code base in this class regarding the audio recording functionality was retrieved from
+* The code base in this class regarding the audio recording functionality ONLY was retrieved from
 * http://developer.android.com/guide/topics/media/audio-capture.html
 * The original example code has been modified to fit the needs of this project. For example the
 * whole UI is not defined at runtime but rather a couple of buttons are defined at runtime and
 * assigned to the XML layout
 */
     private static final String LOG_TAG = "AudioRecordTest";
-    private static String mFileName = null;
-    private static final String APPFOLDER = "/Serendipity";
+
+    private static String mFileName = "audiorecordtest.3gp";
+    private static File storagePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Serendipity");
+    private static File audioFilePath= new File(storagePath + "/" + mFileName);
 
     private RecordButton mRecordButton = null;
     private MediaRecorder mRecorder = null;
@@ -48,7 +50,6 @@ public class MainActivity extends ActionBarActivity {
     private MediaPlayer mPlayer = null;
 
     private List<String> myList;
-    File file;
 
     private void onRecord(boolean start) {
         if (start) {
@@ -69,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
-            mPlayer.setDataSource(mFileName);
+            mPlayer.setDataSource(audioFilePath.toString());
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
@@ -86,22 +87,26 @@ public class MainActivity extends ActionBarActivity {
     }
     // Method for recording audio
     private void startRecording() {
-        /*
-         * Try adding the following code here and eliminate the need for public MainActivity() later
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";*/
+        // Initializing Media Recorder instance
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        // If directory exists we save there and if not we create a new one and save there
+        if(storagePath.isDirectory()) {
+            mRecorder.setOutputFile(audioFilePath.toString());
+        }else{
+            // Directory structure is built if needed
+            storagePath.mkdir();
+            mRecorder.setOutputFile(audioFilePath.toString());
 
+        }
+        //mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
         mRecorder.start();
     }
     // Method for stopping the recording and releasing the meadiarecorder instance
@@ -155,11 +160,6 @@ public class MainActivity extends ActionBarActivity {
             setOnClickListener(clicker);
         }
     }
-    // Sets the path to external storage to store the recorded audio
-    public MainActivity() {
-        mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
-    }
 
     // onCreate initializes the activity and here buttons for the UI are defined at runtime,
     // dynamically to allow some flexibility with the changing states of the buttons
@@ -183,17 +183,25 @@ public class MainActivity extends ActionBarActivity {
         ListView listView = (ListView) findViewById(R.id.listViewRecordings);
         myList = new ArrayList<String>();
 
+        //Check if a folder for the audio exists, if not then creates one
         File directory = Environment.getExternalStorageDirectory();
-        //file = new File( directory + "/Serendipity" );
-        File list[] = directory.listFiles();
-
-        for( int i=0; i< list.length; i++)
-        {
-            myList.add( list[i].getName() );
+        File newDirectory = new File( directory + "/Serendipity" );
+        if (!newDirectory.isDirectory()){
+            newDirectory.mkdir();
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, myList);
-        listView.setAdapter(adapter); //Set all the file in the list.
+        File list[] = newDirectory.listFiles();
+        if (list != null) {
+            for (int i = 0; i < list.length; i++) {
+                myList.add(list[i].getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, myList);
+            listView.setAdapter(adapter); //Set all the file in the list.
+        } else{
+            Toast.makeText(MainActivity.this,
+                    "The Serendipity directory is empty: fill it up by recording sounds!",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
