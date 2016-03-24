@@ -18,7 +18,9 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
@@ -39,9 +41,10 @@ public class MainActivity extends ActionBarActivity {
 */
     private static final String LOG_TAG = "AudioRecordTest";
 
-    private static String mFileName = "audiorecordtest.3gp";
-    private static File storagePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Serendipity");
-    private static File audioFilePath= new File(storagePath + "/" + mFileName);
+    private static String mFileName = "recording_.3gp";
+    private static File storagePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Serendipity" + "/" + mFileName);
+    //private static File audioFilePath= new File(storagePath + "/" + mFileName);
+    private String timeStamp = null;
 
     private RecordButton mRecordButton = null;
     private MediaRecorder mRecorder = null;
@@ -67,10 +70,11 @@ public class MainActivity extends ActionBarActivity {
         }
     }
     // Method for playing the saved audio
+    //TODO: Make this play the selected audio because currently each saved recording has unique id
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
-            mPlayer.setDataSource(audioFilePath.toString());
+            mPlayer.setDataSource(storagePath.toString());
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
@@ -87,20 +91,21 @@ public class MainActivity extends ActionBarActivity {
     }
     // Method for recording audio
     private void startRecording() {
+        // Initialize a timestamp for the recording
+        timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         // Initializing Media Recorder instance
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         // If directory exists we save there and if not we create a new one and save there
         if(storagePath.isDirectory()) {
-            mRecorder.setOutputFile(audioFilePath.toString());
+            mRecorder.setOutputFile(storagePath.toString() + timeStamp + ".3gp");
         }else{
             // Directory structure is built if needed
             storagePath.mkdir();
-            mRecorder.setOutputFile(audioFilePath.toString());
+            mRecorder.setOutputFile(storagePath.toString() + timeStamp + ".3gp");
 
         }
-        //mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
             mRecorder.prepare();
