@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -41,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
 */
     private static final String LOG_TAG = "AudioRecordTest";
 
-    private static String mFileName = "recording_.3gp";
+    private static String mFileName = "recording_";
     private static File storagePath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Serendipity" + "/" + mFileName);
     //private static File audioFilePath= new File(storagePath + "/" + mFileName);
     private String timeStamp = null;
@@ -70,10 +71,27 @@ public class MainActivity extends ActionBarActivity {
         }
     }
     // Method for playing the saved audio
+    // Object... params means that it is not always necessary to pass in a parameter. For example in
+    // this case the user can click play but also can click listview items which creates this need
+    // OVERLOADED method with one parameter: the path to the audio
     //TODO: Make this play the selected audio because currently each saved recording has unique id
+    private void startPlaying(String audioPath) {
+        mPlayer = new MediaPlayer();
+        try {
+            Log.d(LOG_TAG, "TEST: " + audioPath);
+            mPlayer.setDataSource(audioPath);
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+    }
+
+    // This method might not work currently because there is no clear path to the saved file
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
+            Log.d(LOG_TAG, "TEST: " + storagePath.toString());
             mPlayer.setDataSource(storagePath.toString());
             mPlayer.prepare();
             mPlayer.start();
@@ -207,6 +225,16 @@ public class MainActivity extends ActionBarActivity {
                     "The Serendipity directory is empty: fill it up by recording sounds!",
                     Toast.LENGTH_SHORT).show();
         }
+        Log.d(LOG_TAG, myList.get(3));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.d(LOG_TAG, Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/Serendipity" + "/" + myList.get(position));
+                startPlaying(Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/Serendipity" + "/" + myList.get(position));
+            }
+
+        });
     }
 
     @Override
