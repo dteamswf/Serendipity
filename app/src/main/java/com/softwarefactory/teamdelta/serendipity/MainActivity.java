@@ -225,7 +225,6 @@ public class MainActivity extends ActionBarActivity {
                     "The Serendipity directory is empty: fill it up by recording sounds!",
                     Toast.LENGTH_SHORT).show();
         }
-        Log.d(LOG_TAG, myList.get(3));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
