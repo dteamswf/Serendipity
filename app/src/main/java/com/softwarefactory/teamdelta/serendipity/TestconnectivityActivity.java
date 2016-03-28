@@ -21,7 +21,7 @@ import java.net.URL;
 */
 public class TestconnectivityActivity extends AppCompatActivity {
     // Final for a TEST server URL
-    public final static String testURL = "http://headers.jsontest.com/";
+    public final static String testURL = "http://jsonplaceholder.typicode.com/posts";
     JSONObject jsonobject;
 
     @Override

@@ -194,13 +194,13 @@ public class MainActivity extends ActionBarActivity {
         // Define buttons and set parameters
         mRecordButton = new RecordButton(this);
         mRecordButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        mPlayButton = new PlayButton(this);
-        mPlayButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // mPlayButton = new PlayButton(this);
+        //mPlayButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         // Get container for buttons from the xml and add the buttons to it
         LinearLayout container = (LinearLayout)findViewById(R.id.buttonContainer);
         container.addView(mRecordButton);
-        container.addView(mPlayButton);
+        //container.addView(mPlayButton);
 
         // Set up array adapter for listview to list the saved recordings
         ListView listView = (ListView) findViewById(R.id.listViewRecordings);
