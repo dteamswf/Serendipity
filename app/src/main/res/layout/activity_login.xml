@@ -18,7 +18,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="190dp"
-        android:text="Username"
+        android:hint="Username"
         android:textAlignment="center" />
 
     <EditText
@@ -29,7 +29,7 @@
         android:id="@+id/passwordEdit"
         android:layout_below="@+id/usernameEdit"
         android:layout_centerHorizontal="true"
-        android:text="Password"
+        android:hint="Password"
         android:textAlignment="center" />
 
     <Button

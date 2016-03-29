@@ -70,11 +70,9 @@ public class MainActivity extends ActionBarActivity {
             stopPlaying();
         }
     }
+
     // Method for playing the saved audio
-    // Object... params means that it is not always necessary to pass in a parameter. For example in
-    // this case the user can click play but also can click listview items which creates this need
     // OVERLOADED method with one parameter: the path to the audio
-    //TODO: Make this play the selected audio because currently each saved recording has unique id
     private void startPlaying(String audioPath) {
         mPlayer = new MediaPlayer();
         try {
@@ -88,6 +86,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     // This method might not work currently because there is no clear path to the saved file
+    // Default method with no parameter for playing the most recently recorded audio
     private void startPlaying() {
         mPlayer = new MediaPlayer();
         try {
