@@ -5,12 +5,20 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -21,80 +29,142 @@ import com.google.android.gms.maps.model.MarkerOptions;
 * This class integrates the Goole Maps API to the application. Information about saved recordings
 * should be passed here for it to be possible to view those on the map as markers.
 *
-* TODO: This class provides information about the GPS proximity for the applications alert system to work.
+* The template for this class is provided by Github user Daniel Nugent (16.11.2015)
+*
+* TODO: Use the constantly updated user GPS data to trigger functionality, such as proximity alerts in the application
 */
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private GoogleMap mMap;
-    //Static GPS coordinates for specific places in Italy, dummy data
-    static final LatLng BOLZANO = new LatLng(46.4983, 11.3548);
-    static final LatLng SARENTINO = new LatLng(46.6412, 11.3541);
-    static final LatLng AUER = new LatLng(46.3481, 11.2990);
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
 
+    LatLng latLng;
+    GoogleMap mMap;
+    Marker currLocationMarker;
+
+    // The map fragment is fetched here
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mFragment.getMapAsync(this);
     }
 
-    /**
-     * Here the Google maps is manipulated and configured once it is launched in the app.
-     * If the device doesn't have google services, the user is prompted to install those
-     **/
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        // Disable Maps toolbar (navigation and marker)
-        mMap.getUiSettings().setMapToolbarEnabled(false);
+    public void onMapReady(GoogleMap gMap) {
+        mMap = gMap;
+        // This and the other similar checks in the source code are due to new Google policies
+        // according to which user permissions should be double checked when certain permissions
+        // are required, even though the permissions were given upon installation of the app.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        // Here we get the user location and set the camera zoom to it
+        // We disable the toolbar but enable myLocation button from it
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setMyLocationEnabled(true);
-        Location userLocation = mMap.getMyLocation();
-        LatLng myLocation = null;
-        if (userLocation != null) {
-            myLocation = new LatLng(userLocation.getLatitude(),
-                    userLocation.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
-            //10));
-            // Move the camera to given location and zoom in to specific level
-            // mMap.moveCamera(CameraUpdateFactory.newLatLng(BOLZANO));
-            // mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+
+        buildGoogleApiClient();
+
+        mGoogleApiClient.connect();
+
+    }
+    // Here the Google Api Client gets built
+    // More info at https://developers.google.com/android/guides/api-client
+    protected synchronized void buildGoogleApiClient() {
+        Toast.makeText(this, "buildGoogleApiClient", Toast.LENGTH_SHORT).show();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    // When the user has a connection to the GPS, the following functionality is executed
+    @Override
+    public void onConnected(Bundle bundle) {
+        Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
+        // Mandatory permission check #2...
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
-        // Here we add a few markers to various places for demo purposes, hard coded dummy data
-        // Add a marker in Bolzano, Italy
-        Marker bolzano = mMap.addMarker(new MarkerOptions()
-                .position(BOLZANO)
-                .title("Soundtrack #1")
-                .snippet("The story of this soundtrack..."));
-        bolzano.showInfoWindow();
-        // Add a marker in Sarentino, Italy
-        Marker sarentino = mMap.addMarker(new MarkerOptions()
-                .position(SARENTINO)
-                .title("Soundtrack #2")
-                .snippet("The story of this soundtrack..."));
-        // Add a marker in Auer, Italy
-        Marker auer = mMap.addMarker(new MarkerOptions()
-                .position(AUER)
-                .title("Soundtrack #3")
-                .snippet("The story of this soundtrack..."));
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            //place marker at current position
+            //mMap.clear();
+            latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            currLocationMarker = mMap.addMarker(markerOptions);
+        }
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000); //5 seconds
+        mLocationRequest.setFastestInterval(3000); //3 seconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+
+    }
+
+    // If the connection to GPS is suspended, the user is notified with a toast
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(this, "onConnectionSuspended", Toast.LENGTH_SHORT).show();
+    }
+
+    // If the connection to GPS fails, the user is notified with a toast
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
+    }
+    // From this method we can send information about the location change and compare this with
+    // whatever other locations.
+    // Toasts update in real time and show the lat/lng coordinates of the users updated positions.
+    // This should ultimately be moved to LOG level.
+    //TODO: Implement GPS proximity alert systems
+    //TODO: Dummy data set for monitoring GPS proximity and triggering alerts based on that
+    @Override
+    public void onLocationChanged(Location location) {
+
+        //place marker at current position
+        //mMap.clear();
+        if (currLocationMarker != null) {
+            currLocationMarker.remove();
+        }
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        currLocationMarker = mMap.addMarker(markerOptions);
+
+        Toast.makeText(this, "Location Changed:" + "\n" + latLng, Toast.LENGTH_SHORT).show();
+
+        // Zooming to users current position
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latLng).zoom(14).build();
+
+        mMap.animateCamera(CameraUpdateFactory
+                .newCameraPosition(cameraPosition));
+
+        //If you only need one location, unregister the listener
+        //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
     }
 }
