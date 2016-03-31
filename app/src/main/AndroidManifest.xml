@@ -54,9 +54,18 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
 
+        <!--
+        Here is a DIRTY DIRTY hot fix for the problem with creating new fragents in the activity.
+        By locking the screen rotation in this map activity to PORTRAIT, it prevents the activity
+        restart from creating multiple fragment instances. This should be REFACTORED by properly
+        handling the fragment lifecycle and restoring its state with bundles etc.
+        THIS STILL DOES NOT PREVENT REDUNDANT DATA FROM BEING CREATED WHEN THE ACTIVITY IS MANUALLY
+        RE-ENTERED!!!
+        -->
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait" />
         <activity android:name=".TestconnectivityActivity"></activity>
     </application>
 

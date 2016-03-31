@@ -1,11 +1,14 @@
 package com.softwarefactory.teamdelta.serendipity;
 
 import android.Manifest;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -22,6 +25,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import icepick.Icepick;
+import icepick.State;
 
 /*
 *  Created by Riku Suomela 2016
@@ -42,17 +48,18 @@ public class MapsActivity extends AppCompatActivity implements
     LatLng latLng;
     GoogleMap mMap;
     Marker currLocationMarker;
+    SupportMapFragment mFragment;
+
 
     // The map fragment is fetched here
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -70,21 +77,24 @@ public class MapsActivity extends AppCompatActivity implements
         // We disable the toolbar but enable myLocation button from it
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setMyLocationEnabled(true);
-
+        //Build an instance of the Google API Client
         buildGoogleApiClient();
-
-        mGoogleApiClient.connect();
+        // Check if an instance of the client is already running or not and act accordingly.
+        // This avoids multiple running clients at the same time and thus, redundant data and processing.
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
 
     }
     // Here the Google Api Client gets built
     // More info at https://developers.google.com/android/guides/api-client
     protected synchronized void buildGoogleApiClient() {
-        Toast.makeText(this, "buildGoogleApiClient", Toast.LENGTH_SHORT).show();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+            Toast.makeText(this, "buildGoogleApiClient", Toast.LENGTH_SHORT).show();
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
     }
 
     // When the user has a connection to the GPS, the following functionality is executed
@@ -153,7 +163,7 @@ public class MapsActivity extends AppCompatActivity implements
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         currLocationMarker = mMap.addMarker(markerOptions);
-
+        Log.d("MapsActivity: ", "Coordinates " + latLng);
         Toast.makeText(this, "Location Changed:" + "\n" + latLng, Toast.LENGTH_SHORT).show();
 
         // Zooming to users current position
