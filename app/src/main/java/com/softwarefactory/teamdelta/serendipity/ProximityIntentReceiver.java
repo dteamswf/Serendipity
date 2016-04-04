@@ -38,9 +38,10 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentIntent(pendingIntent);
         builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setLights(Color.WHITE, 1500, 1500);
         builder.setContentTitle("Proximity Alert!");
         builder.setContentText("You are near a saved recording!");
-// builder.build() might be required here but requires min API level change from 15 -> 16
+        // builder.build() might be required here but requires min API level change from 15 -> 16
         myNotification = builder.getNotification();
         notificationManager.notify(NOTIFICATION_ID, myNotification);
     }
