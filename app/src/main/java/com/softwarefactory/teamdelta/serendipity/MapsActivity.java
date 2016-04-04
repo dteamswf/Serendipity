@@ -3,8 +3,14 @@ package com.softwarefactory.teamdelta.serendipity;
 import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +31,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.common.collect.Maps;
 
 /*
 *  Created by Riku Suomela 2016
@@ -34,16 +41,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 *
 * The template for this class is provided by Github user Daniel Nugent (16.11.2015)
 *
-* TODO: Use the constantly updated user GPS data to trigger functionality, such as proximity alerts in the application
+* Most of the proximity alert system code has been adopted from https://www.javacodegeeks.com/2011/01/android-proximity-alerts-tutorial.html with own modifications and deletions
+*
 */
 public class MapsActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
+    LocationManager locationManager;
 
     private static final long POINT_RADIUS = 200; // in Meters
     private static final String PROX_ALERT_INTENT = "com.softwarefactory.teamdelta.serendipity.MapsActivity";
+    private static final long MINIMUM_DISTANCECHANGE_FOR_UPDATE = 1; // in Meters
+    private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000; // in Milliseconds
+    private static final long PROX_ALERT_EXPIRATION = -1;
+    private static final String POINT_LATITUDE_KEY = "POINT_LATITUDE_KEY";
+    private static final String POINT_LONGITUDE_KEY = "POINT_LONGITUDE_KEY";
 
     LatLng latLng;
     GoogleMap mMap;
@@ -56,9 +70,14 @@ public class MapsActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //TODO: Develop a fix to avoid multiple instances of the same fragment to be ran at the same time
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
+        // REMOVE: FOR TESTING. Adding a hard coded GPS location to test the broadcaster / receiver / notification -chain
+        // TODO: Implement the application to add actual proximity alerts initiated by the user
+        addProximityAlert(65.0586538,25.4655026);
 
     }
 
@@ -86,15 +105,16 @@ public class MapsActivity extends AppCompatActivity implements
         }
 
     }
+
     // Here the Google Api Client gets built
     // More info at https://developers.google.com/android/guides/api-client
     protected synchronized void buildGoogleApiClient() {
-            Toast.makeText(this, "buildGoogleApiClient", Toast.LENGTH_SHORT).show();
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+        Toast.makeText(this, "buildGoogleApiClient", Toast.LENGTH_SHORT).show();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
     // When the user has a connection to the GPS, the following functionality is executed
@@ -143,6 +163,7 @@ public class MapsActivity extends AppCompatActivity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Toast.makeText(this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
     }
+
     // From this method we can send information about the location change and compare this with
     // whatever other locations.
     // Toasts update in real time and show the lat/lng coordinates of the users updated positions.
@@ -177,4 +198,79 @@ public class MapsActivity extends AppCompatActivity implements
         //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
     }
+
+    private void addProximityAlert(double latitude, double longitude) {
+
+        Intent intent = new Intent(PROX_ALERT_INTENT);
+        PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.addProximityAlert(
+                latitude, // the latitude of the central point of the alert region
+                longitude, // the longitude of the central point of the alert region
+                POINT_RADIUS, // the radius of the central point of the alert region, in meters
+                PROX_ALERT_EXPIRATION, // time for this proximity alert, in milliseconds, or -1 to indicate no expiration
+                proximityIntent // will be used to generate an Intent to fire when entry to or exit from the alert region is detected
+        );
+
+        IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
+        registerReceiver(new ProximityIntentReceiver(), filter);
+
+    }
+
+    // Method for saving the last known user GPS location as a proximity alert to the systems SharedPrefences
+    private void saveProximityAlertPoint() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location =
+                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location==null) {
+            Toast.makeText(this, "No last known location. Aborting...",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        saveCoordinatesInPreferences((float) location.getLatitude(),
+                (float) location.getLongitude());
+        addProximityAlert(location.getLatitude(), location.getLongitude());
+    }
+
+    // Method for saving desired coordinates in SharedPreferences
+    private void saveCoordinatesInPreferences(float latitude, float longitude) {
+        SharedPreferences prefs =
+                this.getSharedPreferences(getClass().getSimpleName(),
+                        Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putFloat(POINT_LATITUDE_KEY, latitude);
+        prefsEditor.putFloat(POINT_LONGITUDE_KEY, longitude);
+        prefsEditor.commit();
+    }
+
+    // Method for retrieving saved coordinates from SharedPreferences
+    private Location retrievelocationFromPreferences() {
+        SharedPreferences prefs =
+                this.getSharedPreferences(getClass().getSimpleName(),
+                        Context.MODE_PRIVATE);
+        Location location = new Location("POINT_LOCATION");
+        location.setLatitude(prefs.getFloat(POINT_LATITUDE_KEY, 0));
+        location.setLongitude(prefs.getFloat(POINT_LONGITUDE_KEY, 0));
+        return location;
+    }
+
 }
