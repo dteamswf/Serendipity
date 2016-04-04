@@ -26,9 +26,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import icepick.Icepick;
-import icepick.State;
-
 /*
 *  Created by Riku Suomela 2016
 *
@@ -44,6 +41,9 @@ public class MapsActivity extends AppCompatActivity implements
 
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
+
+    private static final long POINT_RADIUS = 200; // in Meters
+    private static final String PROX_ALERT_INTENT = "com.softwarefactory.teamdelta.serendipity.MapsActivity";
 
     LatLng latLng;
     GoogleMap mMap;
