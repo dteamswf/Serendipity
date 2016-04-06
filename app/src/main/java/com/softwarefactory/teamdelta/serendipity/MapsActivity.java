@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -75,10 +76,6 @@ public class MapsActivity extends AppCompatActivity implements
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
-        // REMOVE: FOR TESTING. Adding a hard coded GPS location to test the broadcaster / receiver / notification -chain
-        // TODO: Implement the application to add actual proximity alerts initiated by the user
-        addProximityAlert(65.0586538,25.4655026);
-
     }
 
     @Override
@@ -86,7 +83,7 @@ public class MapsActivity extends AppCompatActivity implements
         mMap = gMap;
         // This and the other similar checks in the source code are due to new Google policies
         // according to which user permissions should be double checked when certain permissions
-        // are required, even though the permissions were given upon installation of the app.
+        // are required, even though the permissions were given upon installation of the app by the user.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
                 (this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -168,8 +165,6 @@ public class MapsActivity extends AppCompatActivity implements
     // whatever other locations.
     // Toasts update in real time and show the lat/lng coordinates of the users updated positions.
     // This should ultimately be moved to LOG level.
-    //TODO: Implement GPS proximity alert systems
-    //TODO: Dummy data set for monitoring GPS proximity and triggering alerts based on that
     @Override
     public void onLocationChanged(Location location) {
 
@@ -203,7 +198,7 @@ public class MapsActivity extends AppCompatActivity implements
 
         Intent intent = new Intent(PROX_ALERT_INTENT);
         PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
+        // Mandatory permission check
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -229,6 +224,7 @@ public class MapsActivity extends AppCompatActivity implements
 
     // Method for saving the last known user GPS location as a proximity alert to the systems SharedPrefences
     private void saveProximityAlertPoint() {
+        // Mandatory permission check
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -249,6 +245,11 @@ public class MapsActivity extends AppCompatActivity implements
         saveCoordinatesInPreferences((float) location.getLatitude(),
                 (float) location.getLongitude());
         addProximityAlert(location.getLatitude(), location.getLongitude());
+        // We add a marker to the position where an alert was saved
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(),location.getLongitude()))
+                .title("Last saved location"));
+
     }
 
     // Method for saving desired coordinates in SharedPreferences
@@ -271,6 +272,12 @@ public class MapsActivity extends AppCompatActivity implements
         location.setLatitude(prefs.getFloat(POINT_LATITUDE_KEY, 0));
         location.setLongitude(prefs.getFloat(POINT_LONGITUDE_KEY, 0));
         return location;
+    }
+
+    // Button for adding markers to the map and saving that location to memory
+    public void markerClick(View view){
+        saveProximityAlertPoint();
+
     }
 
 }

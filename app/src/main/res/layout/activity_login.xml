@@ -76,4 +76,14 @@
         android:layout_above="@+id/passwordEdit"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="51dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Main menu"
+        android:id="@+id/mainMenuButton"
+        android:layout_alignBottom="@+id/loginButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="toMainMenu" />
 </RelativeLayout>
