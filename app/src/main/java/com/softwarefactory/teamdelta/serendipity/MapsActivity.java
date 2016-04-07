@@ -253,7 +253,8 @@ public class MapsActivity extends AppCompatActivity implements
         // We add a marker to the position where an alert was saved
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title("Last saved location"));
+                .title("Last saved location"))
+                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 
     }
 

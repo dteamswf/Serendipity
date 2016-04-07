@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ProximityIntentReceiver extends BroadcastReceiver {
 
@@ -25,9 +26,11 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
 
         if (entering) {
             Log.d(getClass().getSimpleName(), "entering");
+            Toast.makeText(context, "Entering specified GPS proximity area", Toast.LENGTH_SHORT).show();
         }
         else {
             Log.d(getClass().getSimpleName(), "exiting");
+            Toast.makeText(context, "Exiting specified GPS proximity area", Toast.LENGTH_SHORT).show();
         }
 
         NotificationManager notificationManager =
