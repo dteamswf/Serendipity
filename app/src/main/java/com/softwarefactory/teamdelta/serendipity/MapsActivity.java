@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -59,6 +61,7 @@ public class MapsActivity extends AppCompatActivity implements
     private static final long PROX_ALERT_EXPIRATION = -1;
     private static final String POINT_LATITUDE_KEY = "POINT_LATITUDE_KEY";
     private static final String POINT_LONGITUDE_KEY = "POINT_LONGITUDE_KEY";
+    BroadcastReceiver myBroadCast;
 
     LatLng latLng;
     GoogleMap mMap;
@@ -72,7 +75,7 @@ public class MapsActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //TODO: Develop a fix to avoid multiple instances of the same fragment to be ran at the same time
+        //TODO: Develop a fix to avoid multiple in  stances of the same fragment to be ran at the same time
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
@@ -167,7 +170,7 @@ public class MapsActivity extends AppCompatActivity implements
     // This should ultimately be moved to LOG level.
     @Override
     public void onLocationChanged(Location location) {
-
+    Log.d("OnLocationChanged", "Called");
         //place marker at current position
         //mMap.clear();
         if (currLocationMarker != null) {
@@ -218,7 +221,8 @@ public class MapsActivity extends AppCompatActivity implements
         );
 
         IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
-        registerReceiver(new ProximityIntentReceiver(), filter);
+        myBroadCast = new ProximityIntentReceiver();
+        registerReceiver(myBroadCast, filter);
 
     }
 
@@ -235,8 +239,9 @@ public class MapsActivity extends AppCompatActivity implements
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location =
-                locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        //Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location==null) {
             Toast.makeText(this, "No last known location. Aborting...",
                     Toast.LENGTH_LONG).show();
@@ -247,7 +252,7 @@ public class MapsActivity extends AppCompatActivity implements
         addProximityAlert(location.getLatitude(), location.getLongitude());
         // We add a marker to the position where an alert was saved
         mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(),location.getLongitude()))
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title("Last saved location"));
 
     }
@@ -278,6 +283,14 @@ public class MapsActivity extends AppCompatActivity implements
     public void markerClick(View view){
         saveProximityAlertPoint();
 
+    }
+    // onStop method for the activity to remove intent receivers and handle other exiting actions
+    @Override
+    protected void onStop() {
+        if(myBroadCast != null) {
+            unregisterReceiver(myBroadCast);
+        }
+        super.onStop();
     }
 
 }

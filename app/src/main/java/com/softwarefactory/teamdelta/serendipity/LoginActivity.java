@@ -121,8 +121,8 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
-    //Launches MainActivity when ByPass button is clicked
-    // TODO: REMOVE WHEN REST API LOGIN FUNCTIONALITY IS COMPLETED
+    //Launches MainActivity when Main Menu button is clicked
+    // TODO: REMOVE WHEN REST API LOGIN FUNCTIONALITY IS COMPLETED and use only Login button
     public void toMainMenu(View view){
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
@@ -171,15 +171,12 @@ public class LoginActivity extends ActionBarActivity {
 
         protected Integer doInBackground(String... params) {
 
+            // Create HTTP Client and a new HTTP post objects for later manipulation
             HttpClient httpclient = new DefaultHttpClient();
-
-            //set the remote endpoint URL
             HttpPost httppost = new HttpPost("http://aruns.ihostfull.com/drupal/rest/user/login");
 
             // TODO: Check if CSRF validation is required here and how to do it
-            /*
-             * 1st part of the three part session authentication chain
-             */
+            // TODO: Backend needs to be fixed because it is not returning proper web services (In this case JSON)
             try {
 
                 //get the UI elements for username and password
@@ -218,25 +215,6 @@ public class LoginActivity extends ActionBarActivity {
             }catch (Exception e) {
                 Log.v("Error logging in", e.getMessage());
             }
-
-            /*
-             * 2nd part of the three part session authentication chain
-             */
-            HttpGet httpGet = new HttpGet("http://aruns.ihostfull.com/drupal/services/session/token");
-            httpGet.setHeader("Cookie", session_id);
-
-            JSONArray json = new JSONArray();
-            try {
-                HttpResponse response = httpclient.execute(httpGet);
-
-                //read the response and convert it into JSON array
-                json = new JSONArray(EntityUtils.toString(response.getEntity()));
-                //return the JSON array for post processing to onPostExecute function
-                Log.d("2nd JSON DUMP", json.toString());
-            }catch (Exception e) {
-                Log.v("Error retrieving token", e.getMessage());
-            }
-
             return 0;
         }
 

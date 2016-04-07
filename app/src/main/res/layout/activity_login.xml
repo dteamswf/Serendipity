@@ -37,9 +37,10 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:id="@+id/loginButton"
+        android:onClick="login"
         android:layout_below="@+id/passwordEdit"
-        android:layout_centerHorizontal="true"
-        android:onClick="login" />
+        android:layout_alignLeft="@+id/signupText"
+        android:layout_alignStart="@+id/signupText" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/loginButtonFacebook"
@@ -65,8 +66,8 @@
         android:id="@+id/button"
         android:onClick="signup"
         android:layout_below="@+id/signupText"
-        android:layout_alignLeft="@+id/loginButton"
-        android:layout_alignStart="@+id/loginButton" />
+        android:layout_toRightOf="@+id/loginButton"
+        android:layout_toEndOf="@+id/loginButton" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -82,8 +83,8 @@
         android:layout_height="wrap_content"
         android:text="Main menu"
         android:id="@+id/mainMenuButton"
-        android:layout_alignBottom="@+id/loginButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="toMainMenu" />
+        android:onClick="toMainMenu"
+        android:layout_alignTop="@+id/loginButton"
+        android:layout_alignRight="@+id/signupText"
+        android:layout_alignEnd="@+id/signupText" />
 </RelativeLayout>
