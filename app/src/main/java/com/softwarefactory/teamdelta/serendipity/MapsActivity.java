@@ -66,18 +66,17 @@ public class MapsActivity extends AppCompatActivity implements
     LatLng latLng;
     GoogleMap mMap;
     Marker currLocationMarker;
-    SupportMapFragment mFragment;
+    MapFragment mFragment;
 
-
+    //TODO: Fix the issue where redundant data / location listeners are running whenever the maps activity is re-entered. Number grows as n+1 where n is the numbe of current location listeners / API instances / fragments...
     // The map fragment is fetched here
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //TODO: Develop a fix to avoid multiple in  stances of the same fragment to be ran at the same time
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mFragment.getMapAsync(this);
     }
 
@@ -172,7 +171,7 @@ public class MapsActivity extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
     Log.d("OnLocationChanged", "Called");
         //place marker at current position
-        //mMap.clear();
+        mMap.clear();
         if (currLocationMarker != null) {
             currLocationMarker.remove();
         }
@@ -285,12 +284,26 @@ public class MapsActivity extends AppCompatActivity implements
         saveProximityAlertPoint();
 
     }
+    /**
+     * Removes location updates from the FusedLocationApi.
+     */
+    protected void stopLocationUpdates() {
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
+
+        // The final argument to {@code requestLocationUpdates()} is a LocationListener
+        // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
     // onStop method for the activity to remove intent receivers and handle other exiting actions
+    // we also stop all location updates
     @Override
     protected void onStop() {
         if(myBroadCast != null) {
             unregisterReceiver(myBroadCast);
         }
+        stopLocationUpdates();
         super.onStop();
     }
 
